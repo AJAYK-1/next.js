@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
 const FeedbackSchema = new mongoose.Schema({
-    userId: mongoose.SchemaTypes.ObjectId,
+    userId: { type: mongoose.SchemaTypes.ObjectId, ref: 'User_Docs' },
     rating: { type: Number, required: true },
     comment: { type: String, required: true },
     sentiment: { type: String },
-}, { timestamps })
+}, { timestamps: true })
 
 const FeedbackModel = mongoose.model('Feedback_Docs', FeedbackSchema)
 

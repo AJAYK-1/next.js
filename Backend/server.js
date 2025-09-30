@@ -12,8 +12,8 @@ app.use(express.json())
 app.use(cors())
 DBConnect()
 
-app.get('api/user/', userRouter)
-app.get('api/admin/', adminRouter)
+app.use('/api/user', userRouter)
+app.use('/api/admin', adminRouter)
 
 const port = process.env.PORT || 3000;
 app.listen(port,

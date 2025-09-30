@@ -4,7 +4,8 @@ const UserSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, lowercase: true },
     password: { type: String, required: true },
-}, { timestamps })
+}, { timestamps:true })
 
 const UserModel = mongoose.model('User_Docs', UserSchema)
+
 export default UserModel
