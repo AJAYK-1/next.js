@@ -29,7 +29,6 @@ export const SignIn = async (req, res) => {
 
         const isUser = await UserModel.findOne({ email })
         if (!isUser) return res.status(404).json({ message: 'User not found.' })
-
         if (isUser.password === password) {
             const token = jwt.sign({ name: isUser.name, role: 'user' }, secretKey, { expiresIn: '1h' })
             return res.status(200).json({ message: 'SignIn Successful...', token: token })
