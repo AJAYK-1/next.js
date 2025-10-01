@@ -1,13 +1,16 @@
 import UserModel from "../Models/UserModel.js";
 import FeedbackModel from "../Models/FeedbackModel.js";
 import jwt from 'jsonwebtoken'
+import argon2 from 'argon2'
+import natural from 'natural'
 
 export const UserSignUp = async (req, res) => {
     try {
         const { name, email, password } = req.body
         const isUserPresent = await UserModel.findOne({ email })
         if (!isUserPresent) {
-            const newUser = await UserModel.create({ name, email, password })
+            const hashedPassword = await argon2.hash(password)
+            const newUser = await UserModel.create({ name, email, password: hashedPassword })
             await newUser.save()
             return res.status(201).json({ message: 'User Registration Successful' })
         }
@@ -29,7 +32,9 @@ export const SignIn = async (req, res) => {
 
         const isUser = await UserModel.findOne({ email })
         if (!isUser) return res.status(404).json({ message: 'User not found.' })
-        if (isUser.password === password) {
+
+        const passwordCheck = await argon2.verify(isUser.password, password)
+        if (passwordCheck) {
             const token = jwt.sign({ id: isUser.id, role: 'user' }, secretKey, { expiresIn: '1h' })
             return res.status(200).json({ message: 'SignIn Successful...', token: token })
         }
@@ -39,6 +44,17 @@ export const SignIn = async (req, res) => {
         return res.status(500).json({ message: 'Server Error' })
     }
 }
+
+let classifier;
+// Load trained model from JSON
+natural.BayesClassifier.load("./Data/sentiment_model_bayes.json", null, (err, loadedClassifier) => {
+    if (err) {
+        console.error("-----------Failed to load model-----------", err);
+    } else {
+        classifier = loadedClassifier;
+        console.log("---------Model loaded----------");
+    }
+});
 
 export const ExistingFeedback = async (req, res) => {
     try {
@@ -58,11 +74,12 @@ export const NewFeedback = async (req, res) => {
     try {
         const id = req.params.id
         const { rating, comment } = req.body
-        // const ExistingFeedback = await FeedbackModel.findOne({ userId: id }).populate("userId")
 
-        // if (ExistingFeedback) return res.status(409).json({ message: 'Feedback already Exists.' })
+        if (!classifier) return res.status(503).json({ message: "Model not ready" })
+        const formattedComment = comment.toLowerCase().replace(/[^a-z\s]/g, "").replace(/\s+/g, " ").trim()
+        const sentiment = classifier.classify(formattedComment)
 
-        const newFeedback = await FeedbackModel.create({ userId: id, rating, comment })
+        const newFeedback = await FeedbackModel.create({ userId: id, rating, comment, sentiment })
         await newFeedback.save()
         return res.status(201).json({ message: 'Feedback Added Successfully' })
     } catch (error) {
@@ -75,10 +92,17 @@ export const EditFeedback = async (req, res) => {
     try {
         const id = req.params.id
         const { rating, comment } = req.body
+
+        if (!classifier) return res.status(503).json({ message: "Model not ready" })
+        const formattedComment = comment.toLowerCase().replace(/[^a-z\s]/g, "").replace(/\s+/g, " ").trim()
+        const sentiment = classifier.classify(formattedComment)
+
         const EditedFB = await FeedbackModel.findOne({ userId: id })
         if (!EditedFB) return res.status(404).json({ message: 'Feedback not found.' })
+
         EditedFB.rating = rating
         EditedFB.comment = comment
+        EditedFB.sentiment = sentiment
         await EditedFB.save()
         return res.status(201).json({ message: 'Feedback edited successfully.' })
     } catch (error) {
