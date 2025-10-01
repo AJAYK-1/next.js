@@ -22,15 +22,15 @@ export const SignIn = async (req, res) => {
     try {
         const { email, password } = req.body
         const secretKey = process.env.JWT_SECRET || 'my_Secret_key'
-        if (email === 'admin' && password === 'admin123') {
-            const token = jwt.sign({ name: 'admin', role: 'admin' }, secretKey, { expiresIn: '1h' })
+        if (email === process.env.ADMIN_ID && password === process.env.ADMIN_PASSWORD) {
+            const token = jwt.sign({ id: process.env.ADMIN_ID, role: 'admin' }, secretKey, { expiresIn: '1h' })
             return res.status(200).json({ message: 'SignIn Successful, Redirecting to admin dashboard.', token: token })
         }
 
         const isUser = await UserModel.findOne({ email })
         if (!isUser) return res.status(404).json({ message: 'User not found.' })
         if (isUser.password === password) {
-            const token = jwt.sign({ name: isUser.name, role: 'user' }, secretKey, { expiresIn: '1h' })
+            const token = jwt.sign({ id: isUser.id, role: 'user' }, secretKey, { expiresIn: '1h' })
             return res.status(200).json({ message: 'SignIn Successful...', token: token })
         }
         return res.status(401).json({ message: 'SignIn failed.' })
@@ -58,9 +58,9 @@ export const NewFeedback = async (req, res) => {
     try {
         const id = req.params.id
         const { rating, comment } = req.body
-        const ExistingFeedback = await FeedbackModel.findOne({ userId: id }).populate("userId")
+        // const ExistingFeedback = await FeedbackModel.findOne({ userId: id }).populate("userId")
 
-        if (ExistingFeedback) return res.status(409).json({ message: 'Feedback already Exists.' })
+        // if (ExistingFeedback) return res.status(409).json({ message: 'Feedback already Exists.' })
 
         const newFeedback = await FeedbackModel.create({ userId: id, rating, comment })
         await newFeedback.save()
@@ -75,7 +75,7 @@ export const EditFeedback = async (req, res) => {
     try {
         const id = req.params.id
         const { rating, comment } = req.body
-        const EditedFB = await FeedbackModel.findById(id)
+        const EditedFB = await FeedbackModel.findOne({ userId: id })
         if (!EditedFB) return res.status(404).json({ message: 'Feedback not found.' })
         EditedFB.rating = rating
         EditedFB.comment = comment
@@ -90,7 +90,7 @@ export const EditFeedback = async (req, res) => {
 export const DeleteFeedback = async (req, res) => {
     try {
         const id = req.params.id
-        await FeedbackModel.deleteOne({ _id: id })
+        await FeedbackModel.findOneAndDelete({ userId: id })
         return res.status(201).json({ message: 'Feedback Deleted Successfully.' })
     } catch (error) {
         console.log(error.message);
