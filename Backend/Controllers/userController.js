@@ -7,6 +7,8 @@ import natural from 'natural'
 export const UserSignUp = async (req, res) => {
     try {
         const { name, email, password } = req.body
+        if (email === process.env.ADMIN_ID) return res.status(409).json({ message: 'User already Exists' })
+
         const isUserPresent = await UserModel.findOne({ email })
         if (!isUserPresent) {
             const hashedPassword = await argon2.hash(password)
@@ -38,7 +40,7 @@ export const SignIn = async (req, res) => {
             const token = jwt.sign({ id: isUser.id, role: 'user' }, secretKey, { expiresIn: '1h' })
             return res.status(200).json({ message: 'SignIn Successful...', token: token })
         }
-        return res.status(401).json({ message: 'SignIn failed.' })
+        return res.status(401).json({ message: 'Incorrect Email or Password.' })
     } catch (error) {
         console.log(error.message);
         return res.status(500).json({ message: 'Server Error' })
