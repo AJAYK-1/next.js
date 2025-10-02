@@ -8,6 +8,7 @@ const SignInPage = React.lazy(() => import('./Components/Common/signIn'))
 const SignUpPage = React.lazy(() => import('./Components/Common/signUp'))
 
 const AdminDashboard = React.lazy(() => import('./Components/Admin/Dashboard'))
+const AdminLandingPage = React.lazy(() => import('./Components/Admin/AdminHome'))
 
 const UserFeedback = React.lazy(() => import('./Components/User/Feedback'))
 
@@ -38,6 +39,7 @@ function App() {
                   </>
                 ) : (
                   <>
+                    <Route path='/admin-home' element={<AdminLandingPage />} />
                     <Route path='/admin-dashboard' element={<AdminDashboard />} />
                     <Route path="/" element={<Navigate to="/admin-dashboard" />} />
                   </>

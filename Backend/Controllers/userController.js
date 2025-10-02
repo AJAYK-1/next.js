@@ -77,6 +77,8 @@ export const NewFeedback = async (req, res) => {
         const id = req.params.id
         const { rating, comment } = req.body
 
+        if (rating < 1 || rating > 5) return res.status(409).json({ message: 'Please provide a rating' })
+
         if (!classifier) return res.status(503).json({ message: "Model not ready" })
         const formattedComment = comment.toLowerCase().replace(/[^a-z\s]/g, "").replace(/\s+/g, " ").trim()
         const sentiment = classifier.classify(formattedComment)

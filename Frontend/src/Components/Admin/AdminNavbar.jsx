@@ -21,10 +21,17 @@ function AdminNavbar() {
 
           <div className="flex space-x-4">
             <button
-              onClick={() => navigate("/admin-dashboard")}
+              onClick={() => navigate("/admin-home")}
               className="px-3 py-2 rounded-md text-white hover:bg-blue-500 transition-colors"
             >
               Dashboard
+            </button>
+
+            <button
+              onClick={() => navigate("/admin-dashboard")}
+              className="px-3 py-2 rounded-md text-white hover:bg-blue-500 transition-colors"
+            >
+              Feedbacks
             </button>
 
             <button

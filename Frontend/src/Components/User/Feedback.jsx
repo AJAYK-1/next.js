@@ -87,59 +87,70 @@ function Feedback() {
   return (
     <>
       <UserNavbar />
-      <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
-        <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-            {editFB ? "Edit Your Feedback" : "Add Your Feedback"}
-          </h2>
+      <div className="relative flex justify-center items-center min-h-screen bg-gray-100 px-4">
+        <div className="absolute inset-0">
+          <img
+            src="/fbbg1.jpg"
+            alt="background"
+            className="w-full h-full object-cover filter blur-sm"
+          />
+        </div>
 
-          <form onSubmit={Submission} className="space-y-4">
+        <div className="relative z-10 flex flex-col items-center w-full">
 
-            <div>
-              <label className="block text-gray-700 font-medium mb-1">Rating</label>
-              <div className="flex space-x-1">
-                {[1, 2, 3, 4, 5].map((star) => {
-                  const isFilled = hover >= star || (!hover && feedback.rating >= star)
-                  return (
-                    <FaStar
-                      key={star}
-                      size={28}
-                      className="cursor-pointer transition-colors duration-200"
-                      color={isFilled ? "#FACC15" : "#E5E7EB"}
-                      onClick={() => setFeedback({ ...feedback, rating: star })}
-                      onMouseEnter={() => setHover(star)}
-                      onMouseLeave={() => setHover(0)}
-                    />
-                  )
-                })}
+          <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+              {editFB ? "Edit Your Feedback" : "Add Your Feedback"}
+            </h2>
+
+            <form onSubmit={Submission} className="space-y-4">
+
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">Rating</label>
+                <div className="flex space-x-1">
+                  {[1, 2, 3, 4, 5].map((star) => {
+                    const isFilled = hover >= star || (!hover && feedback.rating >= star)
+                    return (
+                      <FaStar
+                        key={star}
+                        size={28}
+                        className="cursor-pointer transition-colors duration-200"
+                        color={isFilled ? "#FACC15" : "#E5E7EB"}
+                        onClick={() => setFeedback({ ...feedback, rating: star })}
+                        onMouseEnter={() => setHover(star)}
+                        onMouseLeave={() => setHover(0)}
+                      />
+                    )
+                  })}
+                </div>
               </div>
-            </div>
 
-            <div>
-              <label className="block text-gray-700 font-medium mb-1">Comment</label>
-              <textarea
-                name="comment"
-                value={feedback.comment}
-                onChange={valueChange}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                rows={4}
-                required
-              />
-            </div>
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">Comment</label>
+                <textarea
+                  name="comment"
+                  value={feedback.comment}
+                  onChange={valueChange}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={4}
+                  required
+                />
+              </div>
 
-            <div className="flex justify-between gap-4">
-              <button type="button" onClick={DeleteFeedback}
-                className="flex-1 bg-red-600 text-white font-semibold py-2 rounded-lg hover:bg-red-500 transition-colors duration-200"              >
-                Delete Feedback
-              </button>
+              <div className="flex justify-between gap-4">
+                <button type="button" onClick={DeleteFeedback}
+                  className="flex-1 bg-red-600 text-white font-semibold py-2 rounded-lg hover:bg-red-500 transition-colors duration-200"              >
+                  Delete Feedback
+                </button>
 
-              <button
-                type="submit"
-                className="flex-1 bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-500 transition-colors duration-200"              >
-                Submit
-              </button>
-            </div>
-          </form>
+                <button
+                  type="submit"
+                  className="flex-1 bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-500 transition-colors duration-200"              >
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
       <Footer />

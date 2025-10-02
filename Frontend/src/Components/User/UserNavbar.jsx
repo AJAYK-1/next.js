@@ -15,15 +15,12 @@ function UserNavbar() {
     <nav className="bg-blue-600 text-white shadow-md">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          {/* Logo / App Name */}
-          <div
-            className="text-2xl font-bold cursor-pointer"
-            onClick={() => navigate("/user-feedback")}
-          >
-            Feedback App
-          </div>
 
-          {/* Logout Button */}
+          <div className="text-2xl font-bold flex">
+                <img src="/feedbacklogo.png" alt="feedbacklogo" className='size-10' />
+                <a href="/user-feedback" > Feedback App </a>
+            </div>
+
           <div>
             <button
               onClick={() => navigate("/user-feedback")}
