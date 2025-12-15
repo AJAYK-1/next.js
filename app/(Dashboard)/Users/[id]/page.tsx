@@ -5,7 +5,7 @@ const UserDetails = async ({ params }: { params: Promise<{ id: string }> }) => {
 
     return (
         <div>
-            <h1>
+            <h1> 
                 Detail of User #{id}
             </h1>
         </div>
