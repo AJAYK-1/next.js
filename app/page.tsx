@@ -2,11 +2,10 @@ import React from 'react'
 
 const Home = () => {
   return (
-    <main>
-      <h1>
-        Home
-      </h1>
-    </main>
+    <section>
+      <h1 className='text-center'> This is the Home page </h1>
+      <p> Welcome to the Home page. </p>
+    </section>
   )
 }
 
