@@ -22,10 +22,33 @@ export async function POST(req: NextRequest) {
         const arrayBuffer = await file.arrayBuffer()
         const buffer = Buffer.from(arrayBuffer)
 
+        const uploadResult = await new Promise((resolve, reject) => {
+            cloudinary.uploader.upload_stream({ resource_type: 'image', folder: 'DevEvent' }, (error, results) => {
+                if (error) return reject(error)
+
+                resolve(results)
+            }).end(buffer)
+        })
+
+        event.image = (uploadResult as { secure_url: string }).secure_url
+
         const createdEvent = await Event.create(event)
         return NextResponse.json({ message: "Event created successfully", event: createdEvent }, { status: 201 })
     } catch (error) {
         console.error(error);
         return NextResponse.json({ message: "Event Creation failed", error: error instanceof Error ? error.message : "Unknown" })
     }
+}
+
+export async function get() {
+    try {
+        await connectDB()
+
+        const events = (await Event.find()).toSorted({ createdAt: -1 })
+
+        return NextResponse.json({ message: "Events fetched successfully", events }, { status: 200 })
+    } catch (error) {
+        return NextResponse.json({ message: "Event Fetching failed", error: error }, { status: 500 })
+    }
+
 }
