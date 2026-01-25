@@ -1,4 +1,6 @@
+import Event, { IEvent } from "@/database/event.model"
 import connectDB from "@/lib/mongodb"
+import { error } from "console"
 import { NextRequest, NextResponse } from "next/server"
 
 type RouteParams = {
@@ -20,8 +22,35 @@ export async function GET(req: NextRequest, { params }: RouteParams): Promise<Ne
 
         const sanitizedSlug = slug.trim().toLocaleLowerCase()
 
-    } catch (error) {
+        const event: IEvent | null = await Event.findOne({ slug: sanitizedSlug }).lean()
 
+        if (!event) {
+            return NextResponse.json(
+                { message: `Event with slug ${sanitizedSlug} not found.` },
+                { status: 404 }
+            )
+        }
+
+        return NextResponse.json(
+            { message: 'Event fetched successfully', event },
+            { status: 200 }
+        )
+    } catch (error) {
+        if (process.env.NODE_ENV === 'development')
+            console.error('Error fetching event by slug:', error)
     }
 
+    if (error instanceof Error) {
+        if (error.message.includes('MONGODB_URI')) {
+            return NextResponse.json(
+                { message: 'Database configuration error' },
+                { status: 500 }
+            )
+        }
+    }
+
+    return NextResponse.json(
+        { message: 'An unexpected error occured' },
+        { status: 500 }
+    )
 }
