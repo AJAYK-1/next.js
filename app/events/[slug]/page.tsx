@@ -53,9 +53,11 @@ const EventDetails = async ({ params }: { params: Promise<{ slug: string }> }) =
     return notFound()
   }
 
-  const { event: { description, image, overview, date, time, location, mode, agenda, audiance, tags, organizer } } = await request.json()
+  const { description, image, overview, date, time, location, mode, agenda, audiance, tags, organizer } = event
 
   if (!description) return notFound()
+
+  const bookings = 10
 
   return (
     <section id='event'>
@@ -95,7 +97,15 @@ const EventDetails = async ({ params }: { params: Promise<{ slug: string }> }) =
         </div>
 
         <aside className='booking'>
-          <p className='text-lg'>Book Event</p>
+          <div className='signup-card'>
+            <h2>Book Your Spot</h2> </div>
+          {bookings > 0 ? (
+            <p className='text-sm'>
+              Join {bookings} people who have already booked their spot!
+            </p>
+          ) : (
+            <p>Be the first to book your spot!</p>
+          )}
         </aside>
       </div>
     </section>
