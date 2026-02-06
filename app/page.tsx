@@ -1,13 +1,8 @@
-import EventCard from '@/components/EventCard'
+import { Suspense } from 'react'
 import ExploreBtn from '@/components/ExploreBtn'
-import { IEvent } from '@/database/event.model'
+import HomeEvents from '@/components/HomeEvents'
 
-const BASE_URL = process.env.NEXT_PUBLIC_HOST_URL
-
-const Home = async () => {
-  const response = await fetch(`${BASE_URL}/api/events`)
-  const { events } = await response.json()
-
+const Home = () => {
   return (
     <section>
       <h1 className='text-center'> This is the Home page </h1>
@@ -15,13 +10,9 @@ const Home = async () => {
       <ExploreBtn />
       <div className='mt-20 space-y-7'>
         <h3>Featured Events</h3>
-        <ul className='events'>
-          {events.map((event: IEvent) => (
-            <li key={event.title}>
-              <EventCard {...event} />
-            </li>
-          ))}
-        </ul>
+        <Suspense fallback={<p>Loading...</p>}>
+          <HomeEvents />
+        </Suspense>
       </div>
     </section>
   )

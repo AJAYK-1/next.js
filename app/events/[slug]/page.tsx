@@ -1,6 +1,9 @@
 import React from 'react'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
+import { IEvent } from '@/database/event.model'
+import { getSimilarEventsBySlug } from '@/lib/actions/event.actions'
+import EventCard from '@/components/EventCard'
 
 const BASE_URL = process.env.NEXT_PUBLIC_HOST_URL
 
@@ -59,6 +62,8 @@ const EventDetails = async ({ params }: { params: Promise<{ slug: string }> }) =
 
   const bookings = 10
 
+  const similarEvents: IEvent[] = await getSimilarEventsBySlug(slug)
+
   return (
     <section id='event'>
       <div className='header'>
@@ -107,6 +112,16 @@ const EventDetails = async ({ params }: { params: Promise<{ slug: string }> }) =
             <p>Be the first to book your spot!</p>
           )}
         </aside>
+      </div>
+
+      <div className='flex w-full flex-col gap-4 pt-20'>
+        <h2>Similar Events</h2>
+        <div className='events'>
+          {similarEvents.length > 0 && similarEvents.map((similarEvent: IEvent) => (
+            <EventCard key={similarEvent._id.toString()} {...similarEvent} />
+          ))}
+        </div>
+
       </div>
     </section>
   )
